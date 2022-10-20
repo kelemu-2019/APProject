@@ -137,7 +137,7 @@ void tcp_server_communication(){
         re_init_readfds(&readfds);               
         printf("blocked on  and select System call...\n");
 
-        /*Step 6 : Wait for client connection*/        
+        /* Wait for client connection*/        
         select(get_max_fd() + 1, &readfds, NULL, NULL, NULL); 
 
         /*If Data arrives on master socket FD*/
@@ -145,7 +145,7 @@ void tcp_server_communication(){
         { 
            printf("New connection recieved recvd, accept the connection.\n");
 
-            /* step 7 : accept() returns a new temporary file desriptor(fd) */
+            /* accept() returns a new temporary file desriptor(fd) */
             comm_socket_fd = accept(master_sock_tcp_fd, (struct sockaddr *)&client_addr, &addr_len);
             if(comm_socket_fd < 0){
 
