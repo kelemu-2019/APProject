@@ -10,4 +10,3 @@ typedef struct server_response_data
    unsigned int file_size;
 
 }server_response_d;
-
