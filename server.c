@@ -108,7 +108,9 @@ void encryption(int size, int N, int** key, int** file, int** encrypt_file){
         for (int j = 0; j < n; j++){
             matrix_mult(N, key, file, encrypt_file, i*n, j*n);
         }
+         //server_result.reslt[i] = encrypt_file;
     }
+   
 }
 
 // print a matrix
@@ -240,12 +242,9 @@ void tcp_server_communication()
                         break;
                     }
 
-                    //server_response_d result;
-                    //server_result.file_size = client_data->file_index + client_data->key;
+                    //server_response_d result;                    
 
-                    //strcpy(server_result.reslt,client_data->buff);
-
-                    printf("Data from client %s\n: ", client_data->buff);
+                    printf("Request from client %s\n: ", client_data->buff);
 
                     //incription
                       char buf[12];
@@ -255,6 +254,8 @@ void tcp_server_communication()
                     int* k = malloc(sizeof(int)*4);
                     int* f = malloc(sizeof(int)*16);
                     int* e = malloc(sizeof(int)*16);
+                    char* enc = malloc(sizeof(char)*16);
+
                     for (int i = 0; i < 16; i++){
                         f[i] = i+1;
                         k[i] = i+1;
@@ -270,11 +271,7 @@ void tcp_server_communication()
 
                     char* f_n = malloc(sizeof(char)*4);
                     char* s_k = malloc(sizeof(char)*4);
-                    /*
-                    f_n = buf;
-                    s_k = buf+4;
-                    //k = buf+8;
-                    */
+                   
                     for (int i = 0; i < 4; i++){
                         f_n[i] = buf[i];
                         s_k[i] = buf[i+4];
@@ -286,8 +283,7 @@ void tcp_server_communication()
                         key[i/size_key][i%size_key] = atoi(&a);
                     }
                     //printf("ok\n");
-                    printf("buffer : %s \n", buf);
-                    //printf("f_n : %s  s_k : %s\n", f_n, s_k);
+                    //printf("buffer : %s \n", buf);                    
                     printf("file_name : %d   size_key : %d\n\n", file_name, size_key);
 
                     print(2, key);
@@ -296,14 +292,29 @@ void tcp_server_communication()
 
                     encryption(4, 2, key, file, encrypt_file);
 
+                    for (int i = 0; i < 16; i++){
+                        server_result.reslt[i] = e[i];
+                    }
+
+                    printf("Encription\n");
+
                     print(4, encrypt_file);
 
-
+                    //strcpy(server_result.reslt,enc);
+                   
                     /* Server replying back to client */
                     sent_recv_data = sendto(comm_socket_fd, (char *)&server_result, sizeof(server_response_d), 0,
                                              (struct sockaddr *)&client_addr, sizeof(struct sockaddr));
 
                     printf("Server sent %d bytes in reply to client\n", sent_recv_data);
+                    /*
+                    free(encrypt_file);
+                    free(key);
+                    free(file);
+                    free(k);
+                    free(f);
+                    free(e);
+                    */
                 }
             }
         }

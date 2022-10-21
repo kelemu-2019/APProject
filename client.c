@@ -59,7 +59,7 @@ PROMPT_USER:
 
     
     
-    printf("Enter string : \n");    
+    printf("Enter request file index, key : \n");    
     scanf("%[^\n]%*c", client_data.buff);    
     
     /*
@@ -73,25 +73,24 @@ PROMPT_USER:
     
 */     
 
-
-    //sent_recv_data = sendto(sockfd,&client_data,sizeof(client_data), 0, (struct sockaddr *)&dest,sizeof(struct sockaddr));
+ 
 
     /*send the data to server*/
     
     sent_recv_data = sendto(sockfd,&client_data,sizeof(client_request_d),0, (struct sockaddr *)&dest,sizeof(struct sockaddr));
         
    
-    printf("No of bytes sent = %d\n", sent_recv_data);  
+    //printf("No of bytes sent = %d\n", sizeof(client_data));  
   
     
     /*recvfrom data from server*/
     sent_recv_data =  recvfrom(sockfd, (char *)&server_result, sizeof(server_response_d), 0,(struct sockaddr *)&dest, &addr_len);
 
-    printf("No of bytes recvd = %d\n", sent_recv_data);
-    
-    printf("Result recvd = %u\n", server_result.file_size);
-    printf("Result recvd = %s\n", server_result.reslt);
-    
+    //printf("No of bytes recived = %d\n", sizeof(server_response_d));
+    int x =strlen(server_result.reslt);
+    printf("Recived file size = %d\n",x);
+    printf("Recived encrypted file  = %s\n", server_result.reslt);
+
     /*If client to send data agin*/
     goto PROMPT_USER;
 }
