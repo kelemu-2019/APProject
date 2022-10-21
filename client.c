@@ -4,19 +4,22 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <memory.h>
+#include <string.h>
+#include <unistd.h>
 #include  "request_response_data.h"
 
 #define DEST_PORT            2000
+#define MAX 80
 #define SERVER_IP_ADDRESS   "127.0.0.1"
 
 client_request_d client_data;
-server_response_d result;
+server_response_d server_result;
 
 void tcp_communication(){
 
     /*Initialization*/   
     int sockfd = 0, 
-        sent_recv_bytes = 0;
+        sent_recv_data= 0;
 
     int addr_len = 0;
 
@@ -38,35 +41,57 @@ void tcp_communication(){
 
     connect(sockfd, (struct sockaddr *)&dest,sizeof(struct sockaddr));
 
-    /*Step 4 : recive data to be sent to server*/    
+    /*recive data to be sent to server*/    
 
 PROMPT_USER:
     
 
+
     // Add the code
+   
+   /*
+    bzero(client_data.buff, sizeof(client_data.buff[MAX]));
+    printf("Enter the string : ");
+    int n = 0;
+    while ((client_data.buff[n++] = getchar()) != '\n');
+    write(sockfd,client_data.buff, sizeof(client_data.buff[MAX]));
+    */
+
+    
+    
+    printf("Enter string : \n");    
+    scanf("%[^\n]%*c", client_data.buff);    
+    
+    /*
     printf("Enter index : ?\n");
     scanf("%u", &client_data.file_index);
+    
     printf("Enter key : ?\n");
     scanf("%u", &client_data.key);
 
+    printf("Data %s\n",server_result.reslt);
     
+*/     
+
+
+    //sent_recv_data = sendto(sockfd,&client_data,sizeof(client_data), 0, (struct sockaddr *)&dest,sizeof(struct sockaddr));
+
     /*send the data to server*/
-    sent_recv_bytes = sendto(sockfd, 
-           &client_data,
-           sizeof(client_request_d), 
-           0, 
-           (struct sockaddr *)&dest, 
-           sizeof(struct sockaddr));
     
-    printf("No of bytes sent = %d\n", sent_recv_bytes);  
+    sent_recv_data = sendto(sockfd,&client_data,sizeof(client_request_d),0, (struct sockaddr *)&dest,sizeof(struct sockaddr));
+        
+   
+    printf("No of bytes sent = %d\n", sent_recv_data);  
   
     
     /*recvfrom data from server*/
-    sent_recv_bytes =  recvfrom(sockfd, (char *)&result, sizeof(server_response_d), 0,(struct sockaddr *)&dest, &addr_len);
+    sent_recv_data =  recvfrom(sockfd, (char *)&server_result, sizeof(server_response_d), 0,(struct sockaddr *)&dest, &addr_len);
 
-    printf("No of bytes recvd = %d\n", sent_recv_bytes);
+    printf("No of bytes recvd = %d\n", sent_recv_data);
     
-    printf("Result recvd = %u\n", result.file_size);
+    printf("Result recvd = %u\n", server_result.file_size);
+    printf("Result recvd = %s\n", server_result.reslt);
+    
     /*If client to send data agin*/
     goto PROMPT_USER;
 }
